@@ -71,18 +71,25 @@ Returns:
     '''
     complement = ""
     for x in seq:
-        if x == 'A' or 'a':
-            complement.append('T')
-        if x == "T" or 't':
-            complement.append('A')
-        if x == "G" or "g":
-            complement.append("C")
-        if x == "C" or "c":
-            complement.append("G")
+        if x == 'A':
+            complement += 'T'
+        elif x == 'a':
+            complement += 't'
+        elif x == "T":
+            complement += 'A'
+        elif x == 't':
+            complement += 'a'
+        elif x == "G":
+            complement += "C"
+        elif x == 'g':
+            complement += 'c'
+        elif x == "C":
+            complement += "G"
+        elif x == 'c':
+            complement += "g"
         else:
-            complement.append("N")
+            complement += "N"
     return complement
-
 
 
 def reverse_complement_DNA(seq):
@@ -110,13 +117,14 @@ Returns:
     num_c = 0.0
     for x in seq:
         if x == "G" or "g":
-            num_g += 1
-        if x == "C" or "c":
-            num_c += 1
+            num_g += 1.0
+        elif x == "C" or "c":
+            num_c += 1.0
     total_len = float(len(seq))
     g_and_c = num_c + num_g
+    print(g_and_c)
     percent_gc = g_and_c / total_len
-    return percent_gc * 100.0
+    return str(percent_gc * 100.0) + "%"
 
 
 def count_kmers(seq, kmerLength, DNA = True):
@@ -133,37 +141,13 @@ Returns:
     dict, dictionary with kmers as keys and the counts of the kmers as values
 '''
     kmers = []
-    a = 0
-    b = kmerLength
-    while a < len(seq):
-        a_kmer = seq[a:b]
-        kmers.append(a_kmer)
-        a += 1
-        b += 1
-    kmer_dict = {}
-    for x in kmers:
-        if x in kmer_dict.keys():
-            kmer_dict[x] += 1
-        else:
-            kmer_dict[x] = 1
+    for x in range(0, len(seq)-kmerLength+1):
+        kmers.append(seq[x:x+kmerLength])
     if DNA == True:
-        reverse_seq = reverse_complement_DNA(seq)
-        reverse_kmers = []
-        a = 0
-        b = kmerLength
-        while a < len(reverse_seq):
-            a_rev_kmer = seq[a:b]
-            reverse_kmers.append(a_rev_kmer)
-            a += 1
-            b += 1
-        reverse_kmer_dict = {}
-        for x in reverse_kmers:
-            if x in reverse_kmer_dict.keys():
-                reverse_kmer_dict[x] += 1
-            else:
-                reverse_kmer_dict[x] = 1
-    return kmer_dict,reverse_kmer_dict
-
+        for x in range(0, len(reverse_complement_DNA(seq))-kmerLength+1):
+            kmers.append(reverse_complement_DNA(seq)[x:x+kmerLength])
+    kmer_dict = {x:kmers.count(x) for x in kmers}
+    return kmer_dict
 
 
 def translate_DNA(seq):
@@ -189,9 +173,8 @@ Returns:
     for x in codons:
         if len(x) == 3:
             if x in transTab1L.keys():
-                translation.append(transTab1L[x])
+                translation += transTab1L[x]
     return translation
-
 
 
 ######################## End of Assigned Functions ###########################
@@ -226,6 +209,14 @@ Returns:
     tempLines.append('')
     return '\n'.join(tempLines)
 
+#####----- HOW THIS FUNCTION WORKS -----####
+#This function first initializes an empty list called tempLines. Then it strips any leading 
+#or trailing whitespace from the header that was input. Then if the header does not begin with 
+#a '>' one is added to the header. Next, the header that has the '>' is appended to the tempLines
+#list. Then for loop runs xrange which takes in arguments that will start, stop, and advance the 
+#range. So in this case, it creates the length of a line and appending each line back to tempLines.
+#Last, it adds a empty string to the end of the line so that when the function is called, it
+#returns a string that ends with the empty string, rather than a new line ("\n") character.
 
 ############################# END FORMATTING ###################################
 
@@ -279,3 +270,4 @@ Returns:
 
 
 ####################### End of File Functions #########################
+
